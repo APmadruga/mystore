@@ -13,12 +13,12 @@ import org.example.repository.StoreRepository;
 import org.example.servise.response.OrderRS;
 import org.example.servise.response.ProductRS;
 import org.springframework.stereotype.Service;
-
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Service
 public class OrderService {
@@ -27,7 +27,6 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final ClientRepository clientRepository;
     private final StoreRepository storeRepository;
-
     public OrderService(OrderRepository orderRepository, ProductRepository productRepository, ClientRepository clientRepository, StoreRepository storeRepository) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
@@ -43,7 +42,7 @@ public class OrderService {
                     order.getId(),
                     order.getPurchaseSubmitTime(),
                     order.getTotal(),
-                    order.getProductList().stream().map(x -> x.getId()).collect(Collectors.toList()),
+                    order.getProducts().stream().map(x -> x.getId()).collect(Collectors.toList()),
                     order.getClient().getId(),
                     order.getStore().getId()
             );
@@ -59,7 +58,7 @@ public class OrderService {
                     order.getId(),
                     order.getPurchaseSubmitTime(),
                     order.getTotal(),
-                    order.getProductList().stream().map(x -> x.getId()).collect(Collectors.toList()),
+                    order.getProducts().stream().map(x -> x.getId()).collect(Collectors.toList()),
                     order.getClient().getId(),
                     order.getStore().getId()
             );
@@ -75,16 +74,21 @@ public class OrderService {
         if(!storeRepository.existsById(client.getStore().getId()))
             throw new ResourceNotFound("Client needs to be in a Existing Store");
         Store store = clientRepository.getById(orderRQ.getClientId()).getStore();
-        Order order = new Order(
-                LocalDateTime.now(),
-                orderRQ.getProductListId().stream().map((x) -> {
+        Order order = Order.builder()
+                .purchaseSubmitTime(LocalDateTime.now())
+                .products(orderRQ.getProductListId().stream().map((x) -> {
                     if(productRepository.existsById(x))
                         throw new ResourceNotFound("You need to add Existing ProductsId's");
                     return productRepository.getById(x);
-                }).collect(Collectors.toSet()),
-                client,
-                store
-        );
+                }).collect(Collectors.toList()))
+                .client(client)
+                .store(store)
+                .total(orderRQ.getProductListId().stream().map((x) -> {
+                    if(productRepository.existsById(x))
+                        throw new ResourceNotFound("You need to add Existing ProductsId's");
+                    return productRepository.getById(x);
+                }).map(x -> x.getPrice()).reduce((a,b) -> (Long) a +  (Long) b).stream().count())
+                .build();
         orderRepository.save(order);
         return  new OrderRS(
                 order.getId(),
@@ -95,7 +99,7 @@ public class OrderService {
                 store.getId()
         );
     }
-    
+
     public void deleteById(Long id) {
         try {
             orderRepository.deleteById(id);
@@ -104,3 +108,5 @@ public class OrderService {
         }
     }
 }
+
+

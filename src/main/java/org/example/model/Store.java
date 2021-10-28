@@ -4,6 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.GeneratorType;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Setter
@@ -12,15 +13,15 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Builder
-@Table(name = "Store")
+@Table
 @Entity
 public class Store {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(columnDefinition = "")
+    @Column
     private String name;
-    @Column(columnDefinition = "")
+    @Column
     private Long profit;
     //one Store has many Clientes
     @OneToMany(mappedBy = "store")
@@ -31,6 +32,7 @@ public class Store {
     //one Store has many Order
     @OneToMany(mappedBy = "store")
     private List<Order> orders;
+
 
     /*public Store(String name, List<Client> clients, List<Product> products, List<Order> orders) {
         this.name = name;

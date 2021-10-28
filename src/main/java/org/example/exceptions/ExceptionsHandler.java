@@ -10,13 +10,13 @@ import java.util.Date;
 @RestControllerAdvice
 public class ExceptionsHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {Exception.class})
-    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) throws Exception {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
+    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getCause().toString(), request.getDescription(false));
         return new ResponseEntity<Object>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = {ResourceNotFound.class})
-    public final ResponseEntity<Object> handleAllExceptions(ResourceNotFound ex, WebRequest request) throws Exception {
+    public final ResponseEntity<Object> handleAllExceptions(ResourceNotFound ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<Object>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }

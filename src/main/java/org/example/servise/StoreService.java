@@ -1,18 +1,15 @@
 package org.example.servise;
 
-import org.example.controller.request.ClientRQ;
 import org.example.controller.request.StoreRQ;
 import org.example.exceptions.ResourceNotFound;
-import org.example.model.Client;
 import org.example.model.Store;
 import org.example.repository.StoreRepository;
-import org.example.servise.response.ClientRS;
 import org.example.servise.response.StoreRS;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class StoreService {
@@ -50,9 +47,9 @@ public class StoreService {
                     store.getId(),
                     store.getName(),
                     store.getProfit(),
-                    Long.valueOf(store.getClients().size()),
-                    Long.valueOf(store.getProducts().size()),
-                    Long.valueOf(store.getOrders().size())
+                    (long) store.getClients().size(),
+                    (long) store.getProducts().size(),
+                    (long) store.getOrders().size()
             );
         }catch (Exception e){
             throw new ResourceNotFound("Store Not Found");
@@ -68,10 +65,9 @@ public class StoreService {
                 store.getId(),
                 store.getName(),
                 store.getProfit(),
-                Long.valueOf(store.getClients().size()),
-                Long.valueOf(store.getProducts().size()),
-                Long.valueOf(store.getOrders().size())
-        );
+                0L,
+                0L,
+                0L);
     }
     public void deleteById(Long storeId) {
         try {

@@ -1,8 +1,9 @@
 package org.example.model;
+
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Setter
 @Getter
@@ -10,12 +11,12 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString
 @Builder
-@Table(name = "Product")
+@Table(name = "products")
 @Entity
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Long price;
     private String name;
@@ -23,13 +24,8 @@ public class Product {
     private ProductType productType;
     //many to many products have one order
     @ManyToMany
-    @JoinTable(
-            name = "products_orders",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "order_id"))
-    Set<Order> orders;
+    private List<Order> orders;
     @ManyToOne
-    @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
 }

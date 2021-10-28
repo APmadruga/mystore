@@ -10,7 +10,7 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString
 @Builder
-@Table(name = "Client")
+@Table
 @Entity
 public class Client {
 
@@ -20,13 +20,9 @@ public class Client {
     private String name;
     private String address;
     //one to many with order
-
     @OneToMany(mappedBy = "client")
     private List<Order> orders_submitted;
-
     @ManyToOne
-    @JoinColumn(name = "store_id", nullable = false)
     private Store store;
-
 }
 
